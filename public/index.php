@@ -4,7 +4,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Factory\AppFactory;
 use GuzzleHttp\Client;
-
+use Slim\Psr7\Response as SlimResponse;
 use function PHPUnit\Framework\throwException;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -25,9 +25,23 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 $app->add(function ($request, $handler) {
     $response = $handler->handle($request);
     return $response
-        ->withHeader('Access-Control-Allow-Origin', 'https://kwachowski.pl/')
+        ->withHeader('Access-Control-Allow-Origin', 'http://kwachowski.pl')
         ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST');
+});
+
+// Middleware do blokowania dostępu bezpośredniego
+$app->add(function ($request, $handler) {
+    $referer = $request->getHeaderLine('Referer');
+    $host = $request->getUri()->getHost();
+
+    if (empty($referer) || parse_url($referer, PHP_URL_HOST) !== $host) {
+        $response = new SlimResponse();
+        $response->getBody()->write('Direct access not allowed.');
+        return $response->withStatus(403);
+    }
+
+    return $handler->handle($request);
 });
 
 
