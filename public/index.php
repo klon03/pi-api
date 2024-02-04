@@ -12,7 +12,7 @@ require __DIR__ . '/../vendor/autoload.php';
 $app = AppFactory::create();
 $raspberryIp = "95.108.40.145";
 $raspberryPort = $raspberryIp . ":50551"; 
-
+$allowedOrigin = 'https://kwachowski.pl';
 
 $app->addErrorMiddleware(true, false, false);
 
@@ -23,19 +23,19 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 
 // Middleware do obsługi CORS
 $app->add(function ($request, $handler) {
+    global $allowedOrigin;
     $response = $handler->handle($request);
     return $response
-        ->withHeader('Access-Control-Allow-Origin', 'https://kwachowski.pl')
+        ->withHeader('Access-Control-Allow-Origin', $allowedOrigin)
         ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST');
 });
 
 // Middleware do blokowania dostępu bezpośredniego
 $app->add(function ($request, $handler) {
+    global $allowedOrigin;
     $referer = $request->getHeaderLine('Referer');
-    $host = $request->getUri()->getHost();
-
-    if (empty($referer) || parse_url($referer, PHP_URL_HOST) !== $host) {
+    if (empty($referer) || strpos($referer, $allowedOrigin) !== 0) {
         $response = new SlimResponse();
         $response->getBody()->write('Direct access not allowed.');
         return $response->withStatus(403);
