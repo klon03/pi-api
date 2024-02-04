@@ -23,22 +23,11 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 
 // Middleware do obsługi CORS
 $app->add(function ($request, $handler) {
-    $allowedOrigins = [
-        'http://127.0.0.1:5500',
-        'https://kwachowski.pl/'
-    ];
-
-    $origin = $request->getHeaderLine('Origin');
-
-    if (in_array($origin, $allowedOrigins)) {
-        $response = $handler->handle($request);
-        return $response
-            ->withHeader('Access-Control-Allow-Origin', $origin)
-            ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST');
-    }
-
-    return new Response('Not allowed by CORS', 403);
+    $response = $handler->handle($request);
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', 'https://kwachowski.pl/')
+        ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST');
 });
 
 
