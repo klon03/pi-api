@@ -10,8 +10,8 @@ use function PHPUnit\Framework\throwException;
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = AppFactory::create();
-$raspberryIp = "10.20.40.114";
-$raspberryPort = $raspberryIp . ":5001"; 
+$raspberryIp = "95.108.40.145";
+$raspberryPort = $raspberryIp . ":50551"; 
 
 
 $app->addErrorMiddleware(true, false, false);
