@@ -1,11 +1,9 @@
 <?php 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Factory\AppFactory;
 use GuzzleHttp\Client;
 use Slim\Psr7\Response as SlimResponse;
-use function PHPUnit\Framework\throwException;
 
 require __DIR__ . '/../vendor/autoload.php';
 
